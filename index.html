@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>S1lents $B</title>
+  <title>Join the Discord</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Rajdhani:wght@500&display=swap" rel="stylesheet" />
   <style>
     body {
@@ -195,17 +195,52 @@
         opacity: 0;
       }
     }
+
+    /* Responsive mobile/tablet */
+    @media (max-width: 600px) {
+      .page-header {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+        top: -20px;
+        animation: descendRemontMobile 15s ease-in-out infinite;
+      }
+
+      @keyframes descendRemontMobile {
+        0%, 100% { top: -20px; }
+        50% { top: 70px; }
+      }
+
+      .glow-box {
+        padding: 40px 30px;
+        border-radius: 12px;
+        max-width: 90vw;
+      }
+
+      .join-text {
+        font-size: 2rem;
+        letter-spacing: 2px;
+      }
+
+      .cursor-glow {
+        display: none;
+      }
+
+      .in-dev {
+        font-size: 0.9rem;
+        margin-top: 15px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="header-container">
-    <header class="page-header" title="S1lents, the future of Discord">
-      <span class="abyssal">S1lents</span>, the future of Discord
+    <header class="page-header" title="Abyssal, the future of Discord">
+      <span class="abyssal">Abyssal</span>, the future of Discord
     </header>
   </div>
 
-  <div class="glow-box" id="box" tabindex="0" role="button" aria-label="S1lents, the most advanced $b">
+  <div class="glow-box" id="box" tabindex="0" role="button" aria-label="Join the Discord">
     <div class="cursor-glow" id="cursorGlow"></div>
     <div class="join-text" id="joinText">
       <span>J</span><span>O</span><span>I</span><span>N</span>
@@ -253,7 +288,7 @@
     // Clic sur la box pour rejoindre le Discord
     box.addEventListener('click', () => {
       // Change ici l'URL par celle de ton serveur Discord
-      window.open('https://discord.gg/vpSG675Rsb', '_blank');
+      window.open('https://discord.gg/ton-lien', '_blank');
     });
   </script>
 </body>
