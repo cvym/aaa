@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S1lents $B</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Rajdhani:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #0d0d0d;
+      font-family: 'Orbitron', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .header-container {
+      position: relative;
+      height: 160px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      overflow: visible;
+      margin-bottom: 20px;
+      pointer-events: none;
+    }
+
+    .page-header {
+      position: absolute;
+      top: -30px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: white;
+      user-select: none;
+      pointer-events: auto;
+      animation: descendRemont 10s ease-in-out infinite;
+      text-shadow:
+        0 0 6px rgba(255, 255, 255, 0.8),
+        0 0 12px rgba(255, 255, 255, 0.6),
+        0 0 20px rgba(255, 255, 255, 0.4);
+      transition: text-shadow 0.4s ease, color 0.4s ease;
+      cursor: default;
+    }
+
+    .page-header:hover {
+      text-shadow:
+        0 0 15px rgba(255, 255, 255, 1),
+        0 0 30px rgba(255, 255, 255, 0.8),
+        0 0 45px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Cible uniquement le mot "Abyssal" */
+    .page-header .abyssal {
+      color: white;
+      transition: color 0.4s ease;
+      cursor: default;
+    }
+    .page-header .abyssal:hover {
+      color: rgba(200, 0, 0, 0.6);
+    }
+
+    @keyframes descendRemont {
+      0%, 100% {
+        top: -30px;
+      }
+      50% {
+        top: 110px;
+      }
+    }
+
+    .glow-box {
+      position: relative;
+      border: 2px solid white;
+      padding: 60px 100px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(6px);
+      background-color: rgba(255, 255, 255, 0.02);
+      transition: 
+        transform 0.2s ease, 
+        border-color 0.4s ease,
+        box-shadow 0.4s ease,
+        background-color 0.4s ease;
+      perspective: 1000px;
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 50px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .glow-box:hover {
+      border-color: rgba(150, 0, 0, 0.6);
+      box-shadow: 0 0 30px rgba(150, 0, 0, 0.4);
+      background-color: rgba(255, 0, 0, 0.03);
+    }
+
+    .cursor-glow {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      z-index: 0;
+    }
+
+    .glow-box.hovered .cursor-glow {
+      opacity: 1;
+    }
+
+    .join-text {
+      font-size: 3rem;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-align: center;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+      transition: color 0.4s ease;
+      z-index: 1;
+      position: relative;
+    }
+
+    .join-text span {
+      display: inline-block;
+      transition: 
+        text-shadow 0.3s ease,
+        transform 0.3s ease,
+        color 0.3s ease;
+    }
+
+    .join-text span:hover {
+      text-shadow: 0 0 10px rgba(200, 0, 0, 0.8);
+      transform: scale(1.2);
+      color: rgba(200, 0, 0, 0.6);
+    }
+
+    .in-dev {
+      margin-top: 20px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 2px;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      min-width: 100px;
+    }
+
+    .glow-box.hovered .in-dev {
+      opacity: 1;
+    }
+
+    .dot {
+      animation: blinkDot 1.5s infinite;
+      opacity: 0;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.3);
+      user-select: none;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes blinkDot {
+      0%, 20% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-container">
+    <header class="page-header" title="S1lents, the future of Discord">
+      <span class="abyssal">S1lents</span>, the future of Discord
+    </header>
+  </div>
+
+  <div class="glow-box" id="box" tabindex="0" role="button" aria-label="S1lents, the most advanced $b">
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="join-text" id="joinText">
+      <span>J</span><span>O</span><span>I</span><span>N</span>
+      <span>&nbsp;</span>
+      <span>T</span><span>H</span><span>E</span>
+      <span>&nbsp;</span>
+      <span>D</span><span>I</span><span>S</span><span>C</span><span>O</span><span>R</span><span>D</span>
+    </div>
+    <div class="in-dev">
+      in dev
+      <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>
+  </div>
+
+  <script>
+    const box = document.getElementById('box');
+    const glow = document.getElementById('cursorGlow');
+
+    box.addEventListener('mousemove', (e) => {
+      const rect = box.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      glow.style.left = `${x}px`;
+      glow.style.top = `${y}px`;
+    });
+
+    box.addEventListener('mouseenter', () => {
+      box.classList.add('hovered');
+    });
+
+    box.addEventListener('mouseleave', () => {
+      box.classList.remove('hovered');
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      const x = (window.innerWidth / 2 - e.clientX) / 25;
+      const y = (window.innerHeight / 2 - e.clientY) / 25;
+      box.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      box.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    });
+
+    // Clic sur la box pour rejoindre le Discord
+    box.addEventListener('click', () => {
+      // Change ici l'URL par celle de ton serveur Discord
+      window.open('https://discord.gg/vpSG675Rsb', '_blank');
+    });
+  </script>
+</body>
+</html>
