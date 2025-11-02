@@ -1,320 +1,202 @@
-// Particles Animation
-const canvas = document.getElementById('particles');
+// Snowflake Animation
+const canvas = document.getElementById('snowflakes');
 const ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let snowflakes = [];
+const snowflakeCount = 120;
 
-const particles = [];
-const particleCount = 50;
+// Set canvas size
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-class Particle {
+// Snowflake class
+class Snowflake {
     constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.5;
-        this.speedY = (Math.random() - 0.5) * 0.5;
-        this.opacity = Math.random() * 0.5 + 0.2;
+        this.size = Math.random() * 3 + 1;
+        this.speed = Math.random() * 1.5 + 0.3;
+        this.opacity = Math.random() * 0.8 + 0.2;
+        this.wobble = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = Math.random() * 0.015 + 0.005;
+        this.glowIntensity = Math.random() * 0.5 + 0.5;
     }
 
     update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.y += this.speed;
+        this.x += Math.sin(this.wobble) * 0.3;
+        this.wobble += this.wobbleSpeed;
 
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
+        // Reset snowflake when it goes off screen
+        if (this.y > canvas.height) {
+            this.y = -10;
+            this.x = Math.random() * canvas.width;
+        }
+        
+        if (this.x > canvas.width) {
+            this.x = 0;
+        } else if (this.x < 0) {
+            this.x = canvas.width;
+        }
     }
 
     draw() {
-        ctx.fillStyle = `rgba(139, 92, 246, ${this.opacity})`;
+        // Glow effect
+        ctx.shadowBlur = this.size * 3;
+        ctx.shadowColor = `rgba(255, 255, 255, ${this.opacity * this.glowIntensity})`;
+        
+        // Main circle
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
         ctx.fill();
+        
+        // Draw snowflake cross pattern
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y - this.size);
+        ctx.lineTo(this.x, this.y + this.size);
+        ctx.moveTo(this.x - this.size, this.y);
+        ctx.lineTo(this.x + this.size, this.y);
+        ctx.moveTo(this.x - this.size * 0.6, this.y - this.size * 0.6);
+        ctx.lineTo(this.x + this.size * 0.6, this.y + this.size * 0.6);
+        ctx.moveTo(this.x + this.size * 0.6, this.y - this.size * 0.6);
+        ctx.lineTo(this.x - this.size * 0.6, this.y + this.size * 0.6);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
     }
 }
 
-function init() {
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
+// Initialize snowflakes
+function initSnowflakes() {
+    snowflakes = [];
+    for (let i = 0; i < snowflakeCount; i++) {
+        snowflakes.push(new Snowflake());
     }
 }
 
+// Animation loop
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    particles.forEach((particle, index) => {
-        particle.update();
-        particle.draw();
-
-        // Connect particles
-        particles.forEach((otherParticle, otherIndex) => {
-            if (index !== otherIndex) {
-                const dx = particle.x - otherParticle.x;
-                const dy = particle.y - otherParticle.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 150) {
-                    ctx.strokeStyle = `rgba(139, 92, 246, ${0.1 * (1 - distance / 150)})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(particle.x, particle.y);
-                    ctx.lineTo(otherParticle.x, otherParticle.y);
-                    ctx.stroke();
-                }
-            }
-        });
+    snowflakes.forEach(snowflake => {
+        snowflake.update();
+        snowflake.draw();
     });
-
+    
     requestAnimationFrame(animate);
 }
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
-
-init();
+// Start animation
+initSnowflakes();
 animate();
 
-// Navbar scroll effect
-const navbar = document.querySelector('.navbar');
+// Bitcoin copy functionality
+const bitcoinLogo = document.getElementById('bitcoinLogo');
+const bitcoinLogoWrapper = bitcoinLogo ? bitcoinLogo.closest('.bitcoin-logo-wrapper') : null;
+const btcAddress = 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
-
-// Smooth scroll for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+if (bitcoinLogo || bitcoinLogoWrapper) {
+    const clickTarget = bitcoinLogoWrapper || bitcoinLogo;
+    clickTarget.addEventListener('click', async function() {
+        try {
+            // Copy to clipboard
+            await navigator.clipboard.writeText(btcAddress);
+            
+            // Show toast notification
+            showToast('Bitcoin address copied!');
+            
+            // Add click animation
+            if (bitcoinLogo) {
+                bitcoinLogo.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    bitcoinLogo.style.transform = '';
+                }, 150);
+            }
+            
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            showToast('Failed to copy address', 'error');
         }
     });
-});
+}
 
-// Intersection Observer for scroll animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
+// Discord text copy functionality
+const discordText = document.getElementById('discordText');
+if (discordText) {
+    discordText.addEventListener('click', async function() {
+        try {
+            const discordUsername = 'kyvy';
+            await navigator.clipboard.writeText(discordUsername);
+            
+            // Show toast notification
+            showToast('Discord username copied!');
+            
+            // Add click animation
+            this.style.transform = 'scale(0.98)';
             setTimeout(() => {
-                entry.target.classList.add('visible');
-            }, index * 100);
+                this.style.transform = '';
+            }, 150);
+            
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            showToast('Failed to copy', 'error');
         }
     });
-}, observerOptions);
-
-// Observe feature cards
-document.querySelectorAll('.feature-card').forEach(card => {
-    observer.observe(card);
-});
-
-// Observe pricing card
-const pricingCard = document.querySelector('.pricing-card');
-if (pricingCard) {
-    observer.observe(pricingCard);
 }
 
-// Observe FAQ items
-document.querySelectorAll('.faq-item').forEach(item => {
-    observer.observe(item);
-});
-
-// FAQ Accordion
-document.querySelectorAll('.faq-item').forEach(item => {
-    const question = item.querySelector('.faq-question');
+// Toast notification function
+function showToast(message, type = 'success') {
+    // Remove existing toast
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
     
-    question.addEventListener('click', () => {
-        const isActive = item.classList.contains('active');
+    // Create new toast
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // Show toast
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // Hide and remove toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Add click effect to link cards
+document.querySelectorAll('.link-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        ripple.classList.add('ripple-effect');
         
-        // Close all other items
-        document.querySelectorAll('.faq-item').forEach(otherItem => {
-            otherItem.classList.remove('active');
-        });
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
         
-        // Toggle current item
-        if (!isActive) {
-            item.classList.add('active');
-        }
-    });
-});
-
-// Purchase button click handler
-const purchaseBtn = document.querySelector('.btn-purchase');
-if (purchaseBtn) {
-    purchaseBtn.addEventListener('click', () => {
-        window.location.href = 'https://discord.gg/getabyssal';
-    });
-}
-
-// Discord button handler
-document.querySelectorAll('.btn-discord, .social-link').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.open('https://discord.gg/getabyssal', '_blank');
-    });
-});
-
-// Parallax effect on hero
-let lastScrollY = 0;
-const heroContent = document.querySelector('.hero-content');
-
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    if (heroContent && scrollY < window.innerHeight) {
-        heroContent.style.transform = `translateY(${scrollY * 0.5}px)`;
-        heroContent.style.opacity = 1 - (scrollY / 500);
-    }
-});
-
-// Typing effect for hero title (optional enhancement)
-const heroTitle = document.querySelector('.hero-title');
-if (heroTitle) {
-    const text = heroTitle.innerHTML;
-    heroTitle.innerHTML = '';
-    let charIndex = 0;
-    
-    function typeText() {
-        if (charIndex < text.length) {
-            heroTitle.innerHTML += text.charAt(charIndex);
-            charIndex++;
-            setTimeout(typeText, 50);
-        }
-    }
-    
-    // Uncomment to enable typing effect
-    // setTimeout(typeText, 500);
-}
-
-// Add glow effect to cursor
-const cursor = document.createElement('div');
-cursor.classList.add('cursor-glow');
-document.body.appendChild(cursor);
-
-document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-});
-
-// Add cursor glow styles
-const style = document.createElement('style');
-style.textContent = `
-    .cursor-glow {
-        position: fixed;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
-        pointer-events: none;
-        z-index: 9999;
-        transition: transform 0.1s ease;
-        transform: translate(-50%, -50%);
-    }
-    
-    .cursor-glow::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-        animation: pulse-glow 2s infinite;
-    }
-    
-    @keyframes pulse-glow {
-        0%, 100% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-        50% {
-            transform: translate(-50%, -50%) scale(1.5);
-            opacity: 0.5;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// Stats counter animation
-function animateCounter(element, target, duration = 2000) {
-    let start = 0;
-    const increment = target / (duration / 16);
-    const isDecimal = target.toString().includes('.');
-    
-    const timer = setInterval(() => {
-        start += increment;
-        if (start >= target) {
-            element.textContent = target.toString();
-            clearInterval(timer);
-        } else {
-            element.textContent = isDecimal ? start.toFixed(1) : Math.floor(start).toString();
-        }
-    }, 16);
-}
-
-// Animate stats when they come into view
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const statNumbers = entry.target.querySelectorAll('.stat-number');
-            statNumbers.forEach(stat => {
-                const text = stat.textContent;
-                if (text.includes('%')) {
-                    const value = parseFloat(text.replace('%', ''));
-                    animateCounter(stat, value);
-                    const interval = setInterval(() => {
-                        if (!stat.textContent.includes('%')) {
-                            stat.textContent = stat.textContent + '%';
-                            clearInterval(interval);
-                        }
-                    }, 100);
-                } else if (text.includes('+')) {
-                    const value = parseInt(text.replace('+', ''));
-                    animateCounter(stat, value);
-                    const interval = setInterval(() => {
-                        if (!stat.textContent.includes('+')) {
-                            stat.textContent = stat.textContent + '+';
-                            clearInterval(interval);
-                        }
-                    }, 100);
-                }
-            });
-            statsObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
-const heroStats = document.querySelector('.hero-stats');
-if (heroStats) {
-    statsObserver.observe(heroStats);
-}
-
-// Add hover effect to buttons
-document.querySelectorAll('button, .btn-primary, .btn-secondary').forEach(btn => {
-    btn.addEventListener('mouseenter', (e) => {
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        ripple.style.left = '50%';
-        ripple.style.top = '50%';
-        e.target.appendChild(ripple);
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
         
         setTimeout(() => {
             ripple.remove();
@@ -323,24 +205,20 @@ document.querySelectorAll('button, .btn-primary, .btn-secondary').forEach(btn =>
 });
 
 // Add ripple effect styles
-const rippleStyle = document.createElement('style');
-rippleStyle.textContent = `
-    button, .btn-primary, .btn-secondary {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .ripple {
+const style = document.createElement('style');
+style.textContent = `
+    .ripple-effect {
         position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
         width: 0;
         height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
         transform: translate(-50%, -50%);
-        animation: ripple-animation 0.6s ease-out;
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
     }
     
-    @keyframes ripple-animation {
+    @keyframes ripple {
         to {
             width: 300px;
             height: 300px;
@@ -348,7 +226,194 @@ rippleStyle.textContent = `
         }
     }
 `;
-document.head.appendChild(rippleStyle);
+document.head.appendChild(style);
 
-console.log('🌊 Abyssal Website Loaded Successfully');
+// 3D Parallax Effect - Follow Mouse
+let container = null;
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+let targetX = 0;
+let targetY = 0;
+let currentX = 0;
+let currentY = 0;
 
+// Cursor hover state management
+let isHoveringClickable = false;
+let hoverCheckTimeout = null;
+
+// Smooth cursor position tracking
+let cursorX = window.innerWidth / 2;
+let cursorY = window.innerHeight / 2;
+let targetCursorX = cursorX;
+let targetCursorY = cursorY;
+
+function updateCursorPosition(x, y) {
+    targetCursorX = x;
+    targetCursorY = y;
+}
+
+function animateCursor() {
+    // Smooth interpolation with consistent speed
+    const diffX = targetCursorX - cursorX;
+    const diffY = targetCursorY - cursorY;
+    const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+    
+    // Use adaptive speed based on distance for smooth following
+    const speed = Math.min(0.25, distance * 0.001 + 0.05);
+    
+    cursorX += diffX * speed;
+    cursorY += diffY * speed;
+    
+    // Ensure we're very close to target to prevent jitter
+    if (Math.abs(diffX) < 0.1 && Math.abs(diffY) < 0.1) {
+        cursorX = targetCursorX;
+        cursorY = targetCursorY;
+    }
+    
+    document.body.style.setProperty('--cursor-x', cursorX + 'px');
+    document.body.style.setProperty('--cursor-y', cursorY + 'px');
+    
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOuter = document.querySelector('.cursor-outer');
+    
+    if (cursorDot) {
+        cursorDot.style.left = cursorX + 'px';
+        cursorDot.style.top = cursorY + 'px';
+    }
+    
+    if (cursorOuter) {
+        cursorOuter.style.left = cursorX + 'px';
+        cursorOuter.style.top = cursorY + 'px';
+    }
+    
+    requestAnimationFrame(animateCursor);
+}
+
+animateCursor();
+
+// Update cursor size based on hover state
+function updateCursorSize(hovering) {
+    if (isHoveringClickable === hovering) return; // Skip if already in correct state
+    
+    isHoveringClickable = hovering;
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOuter = document.querySelector('.cursor-outer');
+    
+    if (hovering) {
+        if (cursorOuter) {
+            cursorOuter.style.width = '36px';
+            cursorOuter.style.height = '36px';
+            cursorOuter.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+        }
+        if (cursorDot) {
+            cursorDot.style.width = '10px';
+            cursorDot.style.height = '10px';
+        }
+    } else {
+        if (cursorOuter) {
+            cursorOuter.style.width = '24px';
+            cursorOuter.style.height = '24px';
+            cursorOuter.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+        }
+        if (cursorDot) {
+            cursorDot.style.width = '8px';
+            cursorDot.style.height = '8px';
+        }
+    }
+}
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    // Calculate offset from center (max 30px movement)
+    targetX = (mouseX - centerX) / centerX * 30;
+    targetY = (mouseY - centerY) / centerY * 30;
+    
+    // Update cursor position (smooth)
+    updateCursorPosition(e.clientX, e.clientY);
+    
+    // Debounced hover check to prevent flickering
+    if (hoverCheckTimeout) {
+        clearTimeout(hoverCheckTimeout);
+    }
+    
+    hoverCheckTimeout = setTimeout(() => {
+        const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
+        if (!elementAtPoint) {
+            updateCursorSize(false);
+            return;
+        }
+        
+        const isOverBitcoin = elementAtPoint.closest('.bitcoin-logo-wrapper') !== null || 
+                              elementAtPoint.closest('.bitcoin-logo') !== null;
+        const isOverDiscord = elementAtPoint.closest('.discord-text') !== null ||
+                             elementAtPoint.closest('.discord-wrapper') !== null;
+        
+        updateCursorSize(isOverBitcoin || isOverDiscord);
+    }, 10);
+});
+
+// Use mouseenter/mouseleave for more reliable hover detection
+document.addEventListener('mouseenter', (e) => {
+    if (e.target.closest('.bitcoin-logo-wrapper') || 
+        e.target.closest('.bitcoin-logo') ||
+        e.target.closest('.discord-text') ||
+        e.target.closest('.discord-wrapper')) {
+        updateCursorSize(true);
+    }
+}, true);
+
+document.addEventListener('mouseleave', (e) => {
+    if (e.target.closest('.bitcoin-logo-wrapper') || 
+        e.target.closest('.bitcoin-logo') ||
+        e.target.closest('.discord-text') ||
+        e.target.closest('.discord-wrapper')) {
+        updateCursorSize(false);
+    }
+}, true);
+
+function animateParallax() {
+    if (!container) return;
+    
+    // Smooth interpolation for movement
+    currentX += (targetX - currentX) * 0.1;
+    currentY += (targetY - currentY) * 0.1;
+    
+    // Calculate rotation based on position
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const rotX = ((mouseY - centerY) / centerY) * 3;
+    const rotY = ((mouseX - centerX) / centerX) * 3;
+    
+    // Apply transform with translation and rotation
+    container.style.transform = `
+        perspective(1000px) 
+        translateX(${currentX}px) 
+        translateY(${currentY}px) 
+        rotateX(${-rotX}deg) 
+        rotateY(${rotY}deg) 
+        translateZ(0)
+    `;
+    
+    requestAnimationFrame(animateParallax);
+}
+
+// Wait for DOM to be ready and initialize
+function initParallax() {
+    container = document.querySelector('.container');
+    if (container) {
+        animateParallax();
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initParallax);
+} else {
+    initParallax();
+}
+
+console.log('❄️ kiyun page loaded');
