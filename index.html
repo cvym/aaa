@@ -1,21 +1,221 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600&display=swap"
-      rel="stylesheet"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>S1lents — Custom Discord Bots & Hosting</title>
-    <script type="module" crossorigin src="/assets/index-DdwDcMGL.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-D2ITKQS-.css">
-  </head>
-  <body class="bg-brand-dark text-white">
-    <div id="root"></div>
-  </body>
-</html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020202">
+  <title>s1lents</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #020202;
+      --text: #f5f5f5;
+      --muted: #6d6d6d;
+      --glow: rgba(255, 255, 255, .7);
+    }
 
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      cursor: pointer;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 255, 255, .045), transparent 28%),
+        #020202;
+    }
+
+    .scene::before,
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: -22%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .scene::before {
+      background: repeating-radial-gradient(
+        ellipse at center,
+        transparent 0 9%,
+        rgba(255, 255, 255, .017) 9.15%,
+        transparent 9.35% 18%
+      );
+      animation: breathe 15s ease-in-out infinite;
+    }
+
+    .scene::after {
+      background: radial-gradient(ellipse at center, transparent 0 35%, rgba(0, 0, 0, .86) 78%, #000 100%);
+    }
+
+    .grain {
+      position: absolute;
+      inset: -50%;
+      z-index: 2;
+      pointer-events: none;
+      opacity: .07;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+      transform: rotate(8deg);
+      animation: grain .22s steps(2) infinite;
+    }
+
+    .orb {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(58vw, 620px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 90px rgba(255, 255, 255, .05), inset 0 0 90px rgba(255, 255, 255, .035);
+      animation: orbit 18s ease-in-out infinite;
+    }
+
+    .orb::before,
+    .orb::after {
+      content: "";
+      position: absolute;
+      inset: 11%;
+      border: 1px solid rgba(255, 255, 255, .055);
+      border-radius: 50%;
+    }
+
+    .orb::after {
+      inset: 22%;
+      border-color: rgba(255, 255, 255, .04);
+    }
+
+    .content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      user-select: none;
+      animation: arrive 1.4s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    .eyebrow {
+      margin: 0 0 25px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .48em;
+      text-transform: uppercase;
+      animation: flicker 6s ease-in-out infinite;
+    }
+
+    h1 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(4.7rem, 16vw, 12rem);
+      font-weight: 400;
+      letter-spacing: -.08em;
+      line-height: .78;
+      text-shadow: 0 0 8px rgba(255, 255, 255, .95), 0 0 28px var(--glow), 0 0 88px rgba(255, 255, 255, .27);
+      animation: float 7s ease-in-out infinite, pulse 4.5s ease-in-out infinite;
+    }
+
+    .tagline {
+      margin: 30px 0 0;
+      color: #8e8e8e;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      letter-spacing: .4em;
+      text-transform: uppercase;
+    }
+
+    .hint {
+      position: absolute;
+      right: 30px;
+      bottom: 27px;
+      z-index: 3;
+      margin: 0;
+      color: #4e4e4e;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 9px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      animation: flicker 5s 1s ease-in-out infinite;
+    }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { filter: brightness(.92); }
+      50% { filter: brightness(1.18); }
+    }
+
+    @keyframes orbit {
+      0%, 100% { transform: translate(-50%, -50%) scale(.94) rotate(0deg); opacity: .65; }
+      50% { transform: translate(-50%, -50%) scale(1.08) rotate(180deg); opacity: 1; }
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(.92) rotate(0deg); opacity: .5; }
+      50% { transform: scale(1.08) rotate(12deg); opacity: 1; }
+    }
+
+    @keyframes flicker {
+      0%, 92%, 100% { opacity: 1; }
+      94% { opacity: .35; }
+      96% { opacity: .8; }
+    }
+
+    @keyframes grain {
+      0% { transform: translate(0, 0) rotate(8deg); }
+      25% { transform: translate(2%, -1%) rotate(8deg); }
+      50% { transform: translate(-1%, 2%) rotate(8deg); }
+      75% { transform: translate(1%, 1%) rotate(8deg); }
+      100% { transform: translate(-2%, -1%) rotate(8deg); }
+    }
+
+    @media (max-width: 600px) {
+      .orb { width: 110vw; }
+      .eyebrow { margin-bottom: 21px; font-size: 8px; letter-spacing: .36em; }
+      .tagline { margin-top: 24px; font-size: 8px; letter-spacing: .27em; }
+      .hint { right: 50%; bottom: 22px; transform: translateX(50%); white-space: nowrap; font-size: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="scene" id="scene" aria-label="Entrer sur le Discord s1lents">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="orb" aria-hidden="true"></div>
+    <section class="content">
+      <p class="eyebrow">Welcome To The #1 Trusted Shop</p>
+      <h1>s1lents</h1>
+      <p class="tagline">...</p>
+    </section>
+    <p class="hint">/s1lents</p>
+  </main>
+
+  <script>
+    document.getElementById('scene').addEventListener('click', function () {
+      window.location.href = 'https://discord.gg/s1lents';
+    });
+  </script>
+</body>
+</html>
